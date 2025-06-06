@@ -129,7 +129,14 @@ var setAll = function(){
 };
 //読み込み時に実行
 setAll();
-  chrome.storage.onChanged.addListener(function(changes, namespace) { 
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
    setAll();
-	});
+        });
+
+  // Popupからの更新要求
+  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message && message.type === 'refresh') {
+      setAll();
+    }
+  });
 });//一番外側のfunctionの終わり
