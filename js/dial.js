@@ -9,9 +9,10 @@
   const angleText   = document.getElementById('angle-display');
   const rotateSel   = document.getElementById('rotate');
 
-  const center = { x: 100, y: 100 };
-  const innerRadius = 65;
-  const outerRadius = 95;
+  // サイズを 7 割程度に縮小
+  const center = { x: 70, y: 70 };
+  const outerRadius = 67;
+  const innerRadius = outerRadius - 30;  // ヌブ帯の幅を維持
   const nubRadius   = (innerRadius + outerRadius) / 2;
 
   let dragging = false;
