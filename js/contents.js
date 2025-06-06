@@ -1,4 +1,4 @@
-﻿$(function(){
+$(function(){
 var setAll = function(){	
 	chrome.storage.sync.get(function(items) {
                 var FlipX = items.FlipX,
