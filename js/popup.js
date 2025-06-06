@@ -76,11 +76,37 @@ $(function(){
       chrome.storage.sync.set(option);
     };
 
+      var rotatePending = null;
+      var rotateTimer  = null;
+
+      var flushRotate = function(){
+        rotateTimer = null;
+        var angle = rotatePending;
+        rotatePending = null;
+        if (angle === null) return;
+        chrome.storage.sync.set({Rotate: angle}, function(){
+          chrome.runtime.sendMessage({type:'refresh'});
+          if (rotatePending !== null && !rotateTimer) {
+            rotateTimer = setTimeout(flushRotate, 100);
+          }
+        });
+      };
+
+      var scheduleRotate = function(angle){
+        rotatePending = String(angle);
+        if (!rotateTimer) {
+          rotateTimer = setTimeout(flushRotate, 100);
+        }
+      };
+
+      window.addEventListener('beforeunload', flushRotate);
+
+      // 外部からも呼び出せるように公開
+      window.scheduleRotate = scheduleRotate;
+
       var setRotate = function(){
         var Rotate = $("#rotate").children(':selected').val();
-        var option = {};
-        option.Rotate = Rotate;
-        chrome.storage.sync.set(option);
+        scheduleRotate(Rotate);
       };
 
       // -- filter sliders --
