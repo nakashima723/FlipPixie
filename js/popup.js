@@ -80,24 +80,27 @@ $(function(){
       var rotateTimer  = null;
 
       var flushRotate = function(){
-        if (rotateTimer) {
-          clearTimeout(rotateTimer);
-          rotateTimer = null;
-        }
-        if (rotatePending !== null) {
-          var option = {Rotate: rotatePending};
-          rotatePending = null;
-          chrome.storage.sync.set(option, function(){
-            chrome.runtime.sendMessage({type:'refresh'});
-          });
-        }
+        rotateTimer = null;
+        var angle = rotatePending;
+        rotatePending = null;
+        if (angle === null) return;
+        chrome.storage.sync.set({Rotate: angle}, function(){
+          chrome.runtime.sendMessage({type:'refresh'});
+          if (rotatePending !== null && !rotateTimer) {
+            rotateTimer = setTimeout(flushRotate, 100);
+          }
+        });
       };
 
       var scheduleRotate = function(angle){
         rotatePending = String(angle);
-        if (rotateTimer) clearTimeout(rotateTimer);
-        rotateTimer = setTimeout(flushRotate, 100);
+        if (!rotateTimer) {
+          rotateTimer = setTimeout(flushRotate, 100);
+        }
       };
+
+      window.addEventListener('beforeunload', flushRotate);
+
 
       // 外部からも呼び出せるように公開
       window.scheduleRotate = scheduleRotate;
