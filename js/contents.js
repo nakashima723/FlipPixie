@@ -129,7 +129,27 @@ var setAll = function(){
 };
 //読み込み時に実行
 setAll();
-  chrome.storage.onChanged.addListener(function(changes, namespace) { 
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
    setAll();
-	});
+        });
+
+  // Popupからの更新要求
+  var applyFilters = function(bright, cont) {
+    var filter = 'brightness(' + ((100 + parseInt(bright, 10)) / 100) +
+                 ') contrast(' + ((100 + parseInt(cont, 10)) / 100) + ')';
+    $('img, div').each(function(){
+      if($(this).is('img') || $(this).css('background-image') !== 'none'){
+        $(this).css({'filter': filter});
+      }
+    });
+    $('embed').css({'filter': filter});
+  };
+
+  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message && message.type === 'refresh') {
+      setAll();
+    } else if (message && message.type === 'updateFilters') {
+      applyFilters(message.brightness, message.contrast);
+    }
+  });
 });//一番外側のfunctionの終わり
