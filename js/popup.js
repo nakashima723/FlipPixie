@@ -71,36 +71,44 @@ $(function(){
         chrome.storage.sync.set(option);
       };
 
-      var notifyFilters = function(){
-        var msg = {
-          type: 'updateFilters',
-          brightness: parseInt($("#brightness").val(), 10) || 0,
-          contrast: parseInt($("#contrast").val(), 10) || 0
-        };
-        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
-          if (tabs[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, msg);
-            // fallback in case the content script relies on storage changes
-            chrome.tabs.sendMessage(tabs[0].id, { type: 'refresh' });
-          }
-        });
+      // -- brightness/contrast sliders --
+      var bcPending = {b: null, c: null};
+      var bcTimer  = null;
+
+      var flushBC = function(){
+        if (bcTimer) {
+          clearTimeout(bcTimer);
+          bcTimer = null;
+        }
+        var option = {};
+        if (bcPending.b !== null) option.Brightness = bcPending.b;
+        if (bcPending.c !== null) option.Contrast = bcPending.c;
+        bcPending.b = bcPending.c = null;
+        chrome.storage.sync.set(option);
       };
 
-        var setBrightness = function(){
-          var val = parseInt($("#brightness").val(), 10) || 0;
-          chrome.storage.sync.set({ Brightness: val }, notifyFilters);
-        };
+      var scheduleBC = function(){
+        if (bcTimer) clearTimeout(bcTimer);
+        bcTimer = setTimeout(flushBC, 100);
+      };
 
-        var setContrast = function(){
-          var val = parseInt($("#contrast").val(), 10) || 0;
-          chrome.storage.sync.set({ Contrast: val }, notifyFilters);
-        };
+      var setBrightness = function(){
+        bcPending.b = parseInt($("#brightness").val(), 10) || 0;
+        scheduleBC();
+      };
 
-        var resetBC = function(){
-          $("#brightness").val(0);
-          $("#contrast").val(0);
-          chrome.storage.sync.set({ Brightness: 0, Contrast: 0 }, notifyFilters);
-        };
+      var setContrast = function(){
+        bcPending.c = parseInt($("#contrast").val(), 10) || 0;
+        scheduleBC();
+      };
+
+      var resetBC = function(){
+        $("#brightness").val(0);
+        $("#contrast").val(0);
+        bcPending.b = 0;
+        bcPending.c = 0;
+        flushBC();
+      };
 
       $("#flipX").click(function(){ setButtonX(); });
       $("#flipY").click(function(){ setButtonY(); });
