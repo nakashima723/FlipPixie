@@ -71,20 +71,43 @@ $(function(){
         chrome.storage.sync.set(option);
       };
 
+      // -- brightness/contrast sliders --
+      var bcPending = {b: null, c: null};
+      var bcTimer  = null;
+
+      var flushBC = function(){
+        if (bcTimer) {
+          clearTimeout(bcTimer);
+          bcTimer = null;
+        }
+        var option = {};
+        if (bcPending.b !== null) option.Brightness = bcPending.b;
+        if (bcPending.c !== null) option.Contrast = bcPending.c;
+        bcPending.b = bcPending.c = null;
+        chrome.storage.sync.set(option);
+      };
+
+      var scheduleBC = function(){
+        if (bcTimer) clearTimeout(bcTimer);
+        bcTimer = setTimeout(flushBC, 100);
+      };
+
       var setBrightness = function(){
-        var val = parseInt($("#brightness").val(), 10) || 0;
-        chrome.storage.sync.set({ Brightness: val });
+        bcPending.b = parseInt($("#brightness").val(), 10) || 0;
+        scheduleBC();
       };
 
       var setContrast = function(){
-        var val = parseInt($("#contrast").val(), 10) || 0;
-        chrome.storage.sync.set({ Contrast: val });
+        bcPending.c = parseInt($("#contrast").val(), 10) || 0;
+        scheduleBC();
       };
 
       var resetBC = function(){
         $("#brightness").val(0);
         $("#contrast").val(0);
-        chrome.storage.sync.set({ Brightness: 0, Contrast: 0 });
+        bcPending.b = 0;
+        bcPending.c = 0;
+        flushBC();
       };
 
       $("#flipX").click(function(){ setButtonX(); });
