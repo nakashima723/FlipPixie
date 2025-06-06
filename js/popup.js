@@ -72,13 +72,16 @@ $(function(){
       };
 
       var notifyFilters = function(){
+        var msg = {
+          type: 'updateFilters',
+          brightness: parseInt($("#brightness").val(), 10) || 0,
+          contrast: parseInt($("#contrast").val(), 10) || 0
+        };
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
           if (tabs[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-              type: 'updateFilters',
-              brightness: parseInt($("#brightness").val(), 10) || 0,
-              contrast: parseInt($("#contrast").val(), 10) || 0
-            });
+            chrome.tabs.sendMessage(tabs[0].id, msg);
+            // fallback in case the content script relies on storage changes
+            chrome.tabs.sendMessage(tabs[0].id, { type: 'refresh' });
           }
         });
       };
