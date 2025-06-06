@@ -71,29 +71,33 @@ $(function(){
         chrome.storage.sync.set(option);
       };
 
-      var notifyContent = function(){
+      var notifyFilters = function(){
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
           if (tabs[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, { type: 'refresh' });
+            chrome.tabs.sendMessage(tabs[0].id, {
+              type: 'updateFilters',
+              brightness: parseInt($("#brightness").val(), 10) || 0,
+              contrast: parseInt($("#contrast").val(), 10) || 0
+            });
           }
         });
       };
 
-      var setBrightness = function(){
-        var val = parseInt($("#brightness").val(), 10) || 0;
-        chrome.storage.sync.set({ Brightness: val }, notifyContent);
-      };
+        var setBrightness = function(){
+          var val = parseInt($("#brightness").val(), 10) || 0;
+          chrome.storage.sync.set({ Brightness: val }, notifyFilters);
+        };
 
-      var setContrast = function(){
-        var val = parseInt($("#contrast").val(), 10) || 0;
-        chrome.storage.sync.set({ Contrast: val }, notifyContent);
-      };
+        var setContrast = function(){
+          var val = parseInt($("#contrast").val(), 10) || 0;
+          chrome.storage.sync.set({ Contrast: val }, notifyFilters);
+        };
 
-      var resetBC = function(){
-        $("#brightness").val(0);
-        $("#contrast").val(0);
-        chrome.storage.sync.set({ Brightness: 0, Contrast: 0 }, notifyContent);
-      };
+        var resetBC = function(){
+          $("#brightness").val(0);
+          $("#contrast").val(0);
+          chrome.storage.sync.set({ Brightness: 0, Contrast: 0 }, notifyFilters);
+        };
 
       $("#flipX").click(function(){ setButtonX(); });
       $("#flipY").click(function(){ setButtonY(); });
