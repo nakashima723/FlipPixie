@@ -101,6 +101,7 @@ $(function(){
 
       window.addEventListener('beforeunload', flushRotate);
 
+
       // 外部からも呼び出せるように公開
       window.scheduleRotate = scheduleRotate;
 
