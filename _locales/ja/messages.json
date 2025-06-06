@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "エガマワール"
+  },
+  "extDescription": {
+    "message": "画像を手軽に反転・回転できる拡張です。ブラウザ右上のアイコンから使用できます。"
+  },
+  "options": {
+    "message": "Language"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "__MSG_extName__",
+  "version": "1.3.0",
+  "manifest_version": 3,
+  "description": "__MSG_extDescription__",
+  "default_locale": "ja",
+  "permissions": [
+    "storage"
+  ],
+  "icons": {
+    "16": "images/flipper_16.png",
+    "48": "images/flipper_48.png",
+    "128": "images/flipper_128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*",
+        "file:///*"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/contents.js"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "action": {
+    "default_icon": "images/flipper_16.png",
+    "default_title": "エガマワール",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}

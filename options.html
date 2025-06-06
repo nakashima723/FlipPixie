@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/popup.js"></script>
+  <link rel="stylesheet" href="css/style.css" type="text/css">
+  <link rel="stylesheet" href="css/popup.css" type="text/css">
+</head>
+<body style="width:220px; margin:30px 0 20px 0; text-align:center; background:#fff;">
+  <font size="-1"><button id="flipX">左右反転</button><br></font>
+  <strong><span id="switch" style="color:#666;">OFF</span></strong><br><br>
+
+  <font size="-1"><button id="flipY">上下反転</button><br></font>
+  <strong><span id="switch2" style="color:#666;">OFF</span></strong><br><br>
+
+  <select id="rotate" name="回転" style="display:none;">
+    <option value="0">0°</option>
+  </select>
+
+  <div id="dial-container">
+    <svg id="dial" width="200" height="200" viewBox="0 0 200 200">
+      <circle id="outer" cx="100" cy="100" r="95" />
+      <circle id="inner" cx="100" cy="100" r="65" />
+      <circle id="nub" cx="100" cy="80" r="10" />
+      <text id="angle-display" x="100" y="100" text-anchor="middle" font-size="24" dominant-baseline="middle">0°</text>
+    </svg>
+  
+  <!-- 角度調整ボタン -->
+  <div id="rotate-buttons" style="margin-top: 10px;">
+    <button id="rotate-left" title="反時計回りに45°回転">⟲</button>
+    <button id="rotate-reset" title="回転をリセット">◎</button>
+    <button id="rotate-right" title="時計回りに45°回転">⟳</button>
+  </div>
+
+  <span id="ok">
+    <font size="-2">
+      回転させるときは、<br>
+      対象の画像上で右クリック→<br>
+      「新しいタブで画像を開く」<br>
+      を選択してください。<br>
+    </font>
+  </span>
+
+  <script src="js/dial.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "Flipper"
+  },
+  "extDescription": {
+    "message": "This tool enables rotate and flip images on your browser."
+  },
+  "options": {
+    "message": "言語"
+  }
+}

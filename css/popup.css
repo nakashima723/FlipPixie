@@ -1,0 +1,36 @@
+/* popup.css : ジョグダイアル専用スタイル */
+
+#dial-container {
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 外周のみ薄い灰色に */
+#outer {
+  fill: #ddd;
+  stroke: #000;
+  stroke-width: 2;
+}
+
+/* 内円は背景と同じ白 */
+#inner {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 2;
+}
+
+/* ヌブ（つまみ） */
+#nub {
+  fill: #000;
+}
+
+/* 中央の数値 */
+#angle-display {
+  font-family: sans-serif;
+}
+
+/* 旧プルダウンは非表示 */
+#rotate {
+  display: none;
+}
