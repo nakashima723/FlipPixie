@@ -6,6 +6,9 @@ var setAll = function(){
             Rotate = items.Rotate || "0",
             Brightness = items.Brightness || 0,
             Contrast = items.Contrast || 0,
+            Hue = items.Hue || 0,
+            Saturation = items.Saturation || 0,
+            Invert = items.Invert || 0,
             img = 'img, div';
 
         var scale = " scale(1,1)";
@@ -32,7 +35,10 @@ var setAll = function(){
         $('embed').css({'transform': transform});
 
         var filter = 'brightness(' + ((100 + parseInt(Brightness,10)) / 100) +
-                     ') contrast(' + ((100 + parseInt(Contrast,10)) / 100) + ')';
+                     ') contrast(' + ((100 + parseInt(Contrast,10)) / 100) +
+                     ') hue-rotate(' + parseInt(Hue,10) + 'deg)' +
+                     ' saturate(' + ((100 + parseInt(Saturation,10)) / 100) +
+                     ') invert(' + (parseInt(Invert,10) / 100) + ')';
         $(img).each(function(){
             if($(this).is('img') || $(this).css('background-image') !== 'none'){
                 $(this).css({'filter': filter});
@@ -48,9 +54,12 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 });
 
 // Popupからの更新要求
-var applyFilters = function(bright, cont) {
+var applyFilters = function(bright, cont, hue, sat, inv) {
     var filter = 'brightness(' + ((100 + parseInt(bright, 10)) / 100) +
-                 ') contrast(' + ((100 + parseInt(cont, 10)) / 100) + ')';
+                 ') contrast(' + ((100 + parseInt(cont, 10)) / 100) +
+                 ') hue-rotate(' + parseInt(hue, 10) + 'deg)' +
+                 ' saturate(' + ((100 + parseInt(sat, 10)) / 100) +
+                 ') invert(' + (parseInt(inv, 10) / 100) + ')';
     $('img, div').each(function(){
         if($(this).is('img') || $(this).css('background-image') !== 'none'){
             $(this).css({'filter': filter});
@@ -63,7 +72,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message && message.type === 'refresh') {
         setAll();
     } else if (message && message.type === 'updateFilters') {
-        applyFilters(message.brightness, message.contrast);
+        applyFilters(message.brightness, message.contrast,
+                     message.hue, message.saturate, message.invert);
     }
 });
 });//一番外側のfunctionの終わり

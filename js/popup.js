@@ -10,6 +10,9 @@ $(function(){
           Rotate = items.Rotate,
           Brightness = items.Brightness,
           Contrast = items.Contrast,
+          Hue = items.Hue,
+          Saturation = items.Saturation,
+          Invert = items.Invert,
           OK = true;
 
     if(FlipX === undefined){ FlipX = "off"; }
@@ -17,6 +20,9 @@ $(function(){
       if(Rotate === undefined){ Rotate = "0"; }
       if(Brightness === undefined){ Brightness = 0; }
       if(Contrast === undefined){ Contrast = 0; }
+      if(Hue === undefined){ Hue = 0; }
+      if(Saturation === undefined){ Saturation = 0; }
+      if(Invert === undefined){ Invert = 0; }
 
       var loadButton = function(){
       if(FlipX === "on"){
@@ -34,6 +40,9 @@ $(function(){
         $("#rotate").val(Rotate);
         $("#brightness").val(Brightness);
         $("#contrast").val(Contrast);
+        $("#hue").val(Hue);
+        $("#saturate").val(Saturation);
+        $("#invert").val(Invert);
       };
 
     loadButton();	
@@ -71,43 +80,80 @@ $(function(){
         chrome.storage.sync.set(option);
       };
 
-      // -- brightness/contrast sliders --
-      var bcPending = {b: null, c: null};
-      var bcTimer  = null;
+      // -- filter sliders --
+      var filterPending = {b: null, c: null, h: null, s: null, i: null};
+      var filterTimer  = null;
 
-      var flushBC = function(){
-        if (bcTimer) {
-          clearTimeout(bcTimer);
-          bcTimer = null;
+      var sendImmediate = function(){
+        chrome.runtime.sendMessage({
+          type: 'updateFilters',
+          brightness: $("#brightness").val(),
+          contrast: $("#contrast").val(),
+          hue: $("#hue").val(),
+          saturate: $("#saturate").val(),
+          invert: $("#invert").val()
+        });
+      };
+
+      var flushFilters = function(){
+        if (filterTimer) {
+          clearTimeout(filterTimer);
+          filterTimer = null;
         }
         var option = {};
-        if (bcPending.b !== null) option.Brightness = bcPending.b;
-        if (bcPending.c !== null) option.Contrast = bcPending.c;
-        bcPending.b = bcPending.c = null;
+        if (filterPending.b !== null) option.Brightness = filterPending.b;
+        if (filterPending.c !== null) option.Contrast = filterPending.c;
+        if (filterPending.h !== null) option.Hue = filterPending.h;
+        if (filterPending.s !== null) option.Saturation = filterPending.s;
+        if (filterPending.i !== null) option.Invert = filterPending.i;
+        filterPending = {b:null,c:null,h:null,s:null,i:null};
         chrome.storage.sync.set(option);
       };
 
-      var scheduleBC = function(){
-        if (bcTimer) clearTimeout(bcTimer);
-        bcTimer = setTimeout(flushBC, 100);
+      var scheduleFilters = function(){
+        if (filterTimer) clearTimeout(filterTimer);
+        filterTimer = setTimeout(flushFilters, 100);
       };
 
       var setBrightness = function(){
-        bcPending.b = parseInt($("#brightness").val(), 10) || 0;
-        scheduleBC();
+        filterPending.b = parseInt($("#brightness").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
       };
 
       var setContrast = function(){
-        bcPending.c = parseInt($("#contrast").val(), 10) || 0;
-        scheduleBC();
+        filterPending.c = parseInt($("#contrast").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
+      };
+
+      var setHue = function(){
+        filterPending.h = parseInt($("#hue").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
+      };
+
+      var setSaturate = function(){
+        filterPending.s = parseInt($("#saturate").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
+      };
+
+      var setInvert = function(){
+        filterPending.i = parseInt($("#invert").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
       };
 
       var resetBC = function(){
         $("#brightness").val(0);
         $("#contrast").val(0);
-        bcPending.b = 0;
-        bcPending.c = 0;
-        flushBC();
+        $("#hue").val(0);
+        $("#saturate").val(0);
+        $("#invert").val(0);
+        filterPending = {b:0,c:0,h:0,s:0,i:0};
+        flushFilters();
+        sendImmediate();
       };
 
       $("#flipX").click(function(){ setButtonX(); });
@@ -115,6 +161,9 @@ $(function(){
       $("#rotate").change(function(){ setRotate(); });
       $("#brightness").on('input change', function(){ setBrightness(); });
       $("#contrast").on('input change', function(){ setContrast(); });
+      $("#hue").on('input change', function(){ setHue(); });
+      $("#saturate").on('input change', function(){ setSaturate(); });
+      $("#invert").on('input change', function(){ setInvert(); });
       $("#bc-reset").click(function(){ resetBC(); });
 
     // ジョグダイアル → select を動かすための連携
