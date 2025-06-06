@@ -1,10 +1,12 @@
 ﻿$(function(){
 var setAll = function(){	
 	chrome.storage.sync.get(function(items) {
-		var FlipX = items.FlipX,
-			FlipY = items.FlipY,
-			Rotate = items.Rotate,
-			url = window.location.href,
+                var FlipX = items.FlipX,
+                        FlipY = items.FlipY,
+                        Rotate = items.Rotate,
+                        Brightness = items.Brightness,
+                        Contrast = items.Contrast,
+                        url = window.location.href,
 			img= 'img, div',
 			scale = " scale(1,1)",
 			dot = url.substr(-4,4);	
@@ -18,9 +20,16 @@ var setAll = function(){
 			if(FlipY === undefined){
 				FlipY = "off";
 				}
-			if(Rotate === undefined){
-				Rotate = "0";
-				}
+                        if(Rotate === undefined){
+                                Rotate = "0";
+                                }
+                        if(Brightness === undefined){
+                                Brightness = 0;
+                                }
+                        if(Contrast === undefined){
+                                Contrast = 0;
+                                }
+                        var filter = 'brightness(' + ((100 + parseInt(Brightness,10)) / 100) + ') contrast(' + ((100 + parseInt(Contrast,10)) / 100) + ')';
 		if(FlipX ==="off" && FlipY === "off"){
 			var changed = false;
 			}
@@ -71,9 +80,9 @@ var setAll = function(){
 			}
 		}
 		if(Rotate !== 0 && Rotate !== undefined && document.getElementsByTagName('img').length === 1  && document.getElementsByTagName('div').length === 0 ){
-			$(img).each(function(){
-			if($(this).is('img') || $(this).css('background-image')!== "none"){
-				var width = $(this).width()/2,
+                        $(img).each(function(){
+                                if($(this).is('img') || $(this).css('background-image')!== "none"){
+                                var width = $(this).width()/2,
 				 height = $(this).height()/2,
 				 x = height/width,
 				 y = width/height,
@@ -105,11 +114,18 @@ var setAll = function(){
 				 left = Math.abs(sinX) - width;
 				 top = Math.abs(sinY) - height;
 					 }	 
-				 $(this).css({'position': 'absolute', 'top': top, 'left': left , 'transform': rotate + scale});
-				}
-			});	
-		}
-	});
+                                  $(this).css({'position': 'absolute', 'top': top, 'left': left , 'transform': rotate + scale});
+                                  }
+                          });
+                  }
+                // apply filter settings
+                $(img).each(function(){
+                        if($(this).is('img') || $(this).css('background-image')!== "none"){
+                                $(this).css({'filter': filter});
+                        }
+                });
+                $('embed').css({'filter': filter});
+                });
 };
 //読み込み時に実行
 setAll();
