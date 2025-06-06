@@ -95,9 +95,6 @@
   }
 
   function commitAngle() {
-    // ストレージへ保存
-    chrome.storage.sync.set({ Rotate: String(currentAngle) });
-
     // 互換 select に反映
     if (rotateSel) {
       if (![...rotateSel.options].some(o => o.value === String(currentAngle))) {
@@ -110,6 +107,15 @@
       if (typeof window.jQuery === 'function') {
         window.jQuery(rotateSel).change();
       }
+    }
+
+    // ストレージへ保存（スロットル）
+    if (typeof window.scheduleRotate === 'function') {
+      window.scheduleRotate(currentAngle);
+    } else {
+      chrome.storage.sync.set({ Rotate: String(currentAngle) }, () => {
+        chrome.runtime.sendMessage({type:'refresh'});
+      });
     }
 
     // 外部フック
