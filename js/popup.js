@@ -13,6 +13,7 @@ $(function(){
           Hue = items.Hue,
           Saturation = items.Saturation,
           Invert = items.Invert,
+          ApplyOnLoad = items.ApplyOnLoad,
           OK = true;
 
     if(FlipX === undefined){ FlipX = "off"; }
@@ -23,6 +24,7 @@ $(function(){
       if(Hue === undefined){ Hue = 0; }
       if(Saturation === undefined){ Saturation = 0; }
       if(Invert === undefined){ Invert = 0; }
+      if(ApplyOnLoad === undefined){ ApplyOnLoad = false; }
 
       var loadButton = function(){
       if(FlipX === "on"){
@@ -43,6 +45,7 @@ $(function(){
         $("#hue").val(Hue);
         $("#saturate").val(Saturation);
         $("#invert").val(Invert);
+        $("#applyOnLoad").prop('checked', ApplyOnLoad);
       };
 
     loadButton();	
@@ -156,6 +159,14 @@ $(function(){
         sendImmediate();
       };
 
+      var setApplyOnLoad = function(){
+        ApplyOnLoad = $("#applyOnLoad").prop('checked');
+        var option = {ApplyOnLoad: ApplyOnLoad};
+        chrome.storage.sync.set(option, function(){
+          chrome.runtime.sendMessage({type:'refresh'});
+        });
+      };
+
       $("#flipX").click(function(){ setButtonX(); });
       $("#flipY").click(function(){ setButtonY(); });
       $("#rotate").change(function(){ setRotate(); });
@@ -165,6 +176,7 @@ $(function(){
       $("#saturate").on('input change', function(){ setSaturate(); });
       $("#invert").on('input change', function(){ setInvert(); });
       $("#bc-reset").click(function(){ resetBC(); });
+      $("#applyOnLoad").change(function(){ setApplyOnLoad(); });
 
     // ジョグダイアル → select を動かすための連携
     if (typeof window.jogDialAngleHook === 'function') {

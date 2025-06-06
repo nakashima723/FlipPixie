@@ -1,4 +1,21 @@
 $(function(){
+var applyOnLoad = false;
+var observer = null;
+var obsTimer = null;
+
+var startObserver = function(){
+    if(observer){
+        observer.disconnect();
+        observer = null;
+    }
+    if(!applyOnLoad) return;
+    observer = new MutationObserver(function(muts){
+        if(obsTimer) clearTimeout(obsTimer);
+        obsTimer = setTimeout(setAll, 100);
+    });
+    observer.observe(document.body || document.documentElement, {childList:true, subtree:true});
+};
+
 var setAll = function(){
     chrome.storage.sync.get(function(items) {
         var FlipX = items.FlipX || "off",
@@ -10,6 +27,7 @@ var setAll = function(){
             Saturation = items.Saturation || 0,
             Invert = items.Invert || 0,
             img = 'img, div';
+        applyOnLoad = items.ApplyOnLoad || false;
 
         var scale = " scale(1,1)";
         if (FlipX === "on" && FlipY === "on") {
@@ -45,6 +63,7 @@ var setAll = function(){
             }
         });
         $('embed').css({'filter': filter});
+        startObserver();
     });
 };
 //読み込み時に実行
