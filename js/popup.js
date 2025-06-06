@@ -16,23 +16,15 @@ $(function(){
 
     var loadButton = function(){
       if(FlipX === "on"){
-        $("#switch").text("ON");
-        $("#switch").css('color','#00aced');
-        $("#flipX").css({'color':'#fff','background-color':'#00aced'});	
+        $("#flipX").css({'color':'#fff','background-color':'#00aced'});
       } else {
-        $("#switch").text("OFF");
-        $("#switch").css('color','#666');
-        $("#flipX").css({'color':'#666','background-color':'#fff'});		
+        $("#flipX").css({'color':'#666','background-color':'#fff'});
       }
 
       if(FlipY === "on"){
-        $("#switch2").text("ON");
-        $("#switch2").css('color','#00aced');
-        $("#flipY").css({'color':'#fff','background-color':'#00aced'});	
+        $("#flipY").css({'color':'#fff','background-color':'#00aced'});
       } else {
-        $("#switch2").text("OFF");
-        $("#switch2").css('color','#666');
-        $("#flipY").css({'color':'#666','background-color':'#fff'});		
+        $("#flipY").css({'color':'#666','background-color':'#fff'});
       }
 
       $("#rotate").val(Rotate);
@@ -41,36 +33,28 @@ $(function(){
     loadButton();	
 
     var setButtonX = function(){
-      var flipXmode = $("#switch").text();
       var option = {};
-      if(flipXmode === "ON"){
-        $("#switch").text("OFF");			
-        $("#switch").css('color','#666');
-        $("#flipX").css({'color':'#666','background-color':'#fff'});	
-        option.FlipX= "off";
+      if(FlipX === "on"){
+        $("#flipX").css({'color':'#666','background-color':'#fff'});
+        FlipX = "off";
       } else {
-        $("#switch").text("ON");
-        $("#switch").css('color','#00aced');
         $("#flipX").css({'color':'#fff','background-color':'#00aced'});
-        option.FlipX= "on";
+        FlipX = "on";
       }
+      option.FlipX = FlipX;
       chrome.storage.sync.set(option);
-    };	
+    };
 
-    var setButtonY = function(){		
-      var flipYmode = $("#switch2").text();
+    var setButtonY = function(){
       var option = {};
-      if(flipYmode === "ON"){
-        $("#switch2").text("OFF");			
-        $("#switch2").css('color','#666');
-        $("#flipY").css({'color':'#666','background-color':'#fff'});	
-        option.FlipY= "off";
+      if(FlipY === "on"){
+        $("#flipY").css({'color':'#666','background-color':'#fff'});
+        FlipY = "off";
       } else {
-        $("#switch2").text("ON");
-        $("#switch2").css('color','#00aced');
         $("#flipY").css({'color':'#fff','background-color':'#00aced'});
-        option.FlipY= "on";
+        FlipY = "on";
       }
+      option.FlipY = FlipY;
       chrome.storage.sync.set(option);
     };
 
