@@ -31,6 +31,8 @@
 
   <!-- Brightness and Contrast controls -->
   <font size="-1">
+  <div id="color-toggle" style="margin-top:5px; cursor:pointer; font-weight:bold;">色調整 🔽</div>
+  <div id="color-controls" style="display:none;">
   <div style="margin-top:5px;">
     <label for="brightness">明るさ</label><br>
     <input id="brightness" type="range" min="-100" max="100" value="0">
@@ -51,8 +53,9 @@
     <label for="invert">階調の反転</label><br>
     <input id="invert" type="range" min="0" max="100" value="0">
   </div>
-  </font>
   <button id="bc-reset" style="margin-top:5px;font-size:50%;padding:3px 6px;color:#666;">リセット</button><br>
+  </div>
+  </font>
   <div style="margin-top:5px;">
     <label><input type="checkbox" id="applyOnLoad"> 読み込み時に適用</label>
   </div>

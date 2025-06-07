@@ -204,6 +204,12 @@ $(function(){
       $("#invert").on('input change', function(){ setInvert(); });
       $("#bc-reset").click(function(){ resetBC(); });
       $("#applyOnLoad").change(function(){ setApplyOnLoad(); });
+      $("#color-toggle").click(function(){
+        $("#color-controls").slideToggle(100, function(){
+          var visible = $("#color-controls").is(":visible");
+          $("#color-toggle").text(visible ? "色調整 🔼" : "色調整 🔽");
+        });
+      });
 
     // ジョグダイアル → select を動かすための連携
     if (typeof window.jogDialAngleHook === 'function') {
