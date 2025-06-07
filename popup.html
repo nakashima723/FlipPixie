@@ -29,9 +29,13 @@
     <button id="rotate-right" title="時計回りに45°回転">⟳</button>
   </div>
 
-  <!-- Brightness and Contrast controls -->
+  <div style="margin-top:5px;">
+    <label><input type="checkbox" id="applyOnLoad"> 読み込み時に適用</label>
+  </div>
+
+  <!-- Brightness and Contrast controls --> 
+ <div id="color-toggle" style="margin-top:10px; cursor:pointer; font-weight:bold;">色調整 🔽</div>
   <font size="-1">
-  <div id="color-toggle" style="margin-top:5px; cursor:pointer; font-weight:bold;">色調整 🔽</div>
   <div id="color-controls" style="display:none;">
   <div style="margin-top:5px;">
     <label for="brightness">明るさ</label><br>
@@ -56,9 +60,7 @@
   <button id="bc-reset" style="margin-top:5px;font-size:50%;padding:3px 6px;color:#666;">リセット</button><br>
   </div>
   </font>
-  <div style="margin-top:5px;">
-    <label><input type="checkbox" id="applyOnLoad"> 読み込み時に適用</label>
-  </div>
+
   <script src="js/dial.js"></script>
 </body>
 </html>
