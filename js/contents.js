@@ -3,6 +3,37 @@ var applyOnLoad = false;
 var observer = null;
 var obsTimer = null;
 
+var colorMatrix = null;
+var ensureColorFilter = function(){
+    if (!colorMatrix) {
+        var svgNS = 'http://www.w3.org/2000/svg';
+        var svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('width','0');
+        svg.setAttribute('height','0');
+        var filter = document.createElementNS(svgNS, 'filter');
+        filter.setAttribute('id','fp-colorfilter');
+        colorMatrix = document.createElementNS(svgNS, 'feColorMatrix');
+        colorMatrix.setAttribute('type','matrix');
+        filter.appendChild(colorMatrix);
+        svg.appendChild(filter);
+        (document.body || document.documentElement).appendChild(svg);
+    }
+};
+
+var updateColorMatrix = function(r,g,b){
+    ensureColorFilter();
+    var rf = (100 + parseInt(r,10)) / 100;
+    var gf = (100 + parseInt(g,10)) / 100;
+    var bf = (100 + parseInt(b,10)) / 100;
+    var vals = [
+        rf,0,0,0,0,
+        0,gf,0,0,0,
+        0,0,bf,0,0,
+        0,0,0,1,0
+    ].join(' ');
+    colorMatrix.setAttribute('values', vals);
+};
+
 var startObserver = function(){
     if(observer){
         observer.disconnect();
@@ -26,6 +57,9 @@ var setAll = function(){
             Hue = items.Hue || 0,
             Saturation = items.Saturation || 0,
             Invert = items.Invert || 0,
+            Red = items.Red || 0,
+            Green = items.Green || 0,
+            Blue = items.Blue || 0,
             img = 'img, div';
         applyOnLoad = items.ApplyOnLoad || false;
 
@@ -52,11 +86,12 @@ var setAll = function(){
         });
         $('embed').css({'transform': transform});
 
+        updateColorMatrix(Red, Green, Blue);
         var filter = 'brightness(' + ((100 + parseInt(Brightness,10)) / 100) +
                      ') contrast(' + ((100 + parseInt(Contrast,10)) / 100) +
                      ') hue-rotate(' + parseInt(Hue,10) + 'deg)' +
                      ' saturate(' + ((100 + parseInt(Saturation,10)) / 100) +
-                     ') invert(' + (parseInt(Invert,10) / 100) + ')';
+                     ') invert(' + (parseInt(Invert,10) / 100) + ' ) url(#fp-colorfilter)';
         $(img).each(function(){
             if($(this).is('img') || $(this).css('background-image') !== 'none'){
                 $(this).css({'filter': filter});
@@ -73,12 +108,13 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 });
 
 // Popupからの更新要求
-var applyFilters = function(bright, cont, hue, sat, inv) {
+var applyFilters = function(bright, cont, hue, sat, inv, red, green, blue) {
+    updateColorMatrix(red, green, blue);
     var filter = 'brightness(' + ((100 + parseInt(bright, 10)) / 100) +
                  ') contrast(' + ((100 + parseInt(cont, 10)) / 100) +
                  ') hue-rotate(' + parseInt(hue, 10) + 'deg)' +
                  ' saturate(' + ((100 + parseInt(sat, 10)) / 100) +
-                 ') invert(' + (parseInt(inv, 10) / 100) + ')';
+                 ') invert(' + (parseInt(inv, 10) / 100) + ' ) url(#fp-colorfilter)';
     $('img, div').each(function(){
         if($(this).is('img') || $(this).css('background-image') !== 'none'){
             $(this).css({'filter': filter});
@@ -92,7 +128,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         setAll();
     } else if (message && message.type === 'updateFilters') {
         applyFilters(message.brightness, message.contrast,
-                     message.hue, message.saturate, message.invert);
+                     message.hue, message.saturate, message.invert,
+                     message.red, message.green, message.blue);
     }
 });
 });//一番外側のfunctionの終わり
