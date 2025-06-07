@@ -12,9 +12,12 @@ $(function(){
           Contrast = items.Contrast,
           Hue = items.Hue,
           Saturation = items.Saturation,
-          Invert = items.Invert,
-          ApplyOnLoad = items.ApplyOnLoad,
-          OK = true;
+         Invert = items.Invert,
+         Red = items.Red,
+         Green = items.Green,
+         Blue = items.Blue,
+         ApplyOnLoad = items.ApplyOnLoad,
+         OK = true;
 
     if(FlipX === undefined){ FlipX = "off"; }
     if(FlipY === undefined){ FlipY = "off"; }
@@ -23,8 +26,11 @@ $(function(){
       if(Contrast === undefined){ Contrast = 0; }
       if(Hue === undefined){ Hue = 0; }
       if(Saturation === undefined){ Saturation = 0; }
-      if(Invert === undefined){ Invert = 0; }
-      if(ApplyOnLoad === undefined){ ApplyOnLoad = false; }
+     if(Invert === undefined){ Invert = 0; }
+     if(Red === undefined){ Red = 0; }
+     if(Green === undefined){ Green = 0; }
+     if(Blue === undefined){ Blue = 0; }
+     if(ApplyOnLoad === undefined){ ApplyOnLoad = false; }
 
       var loadButton = function(){
       if(FlipX === "on"){
@@ -45,6 +51,9 @@ $(function(){
         $("#hue").val(Hue);
         $("#saturate").val(Saturation);
         $("#invert").val(Invert);
+        $("#red").val(Red);
+        $("#green").val(Green);
+        $("#blue").val(Blue);
         $("#applyOnLoad").prop('checked', ApplyOnLoad);
       };
 
@@ -111,7 +120,7 @@ $(function(){
       };
 
       // -- filter sliders --
-      var filterPending = {b: null, c: null, h: null, s: null, i: null};
+      var filterPending = {b: null, c: null, h: null, s: null, i: null, r: null, g: null, bl: null};
       var filterTimer  = null;
 
       var sendImmediate = function(){
@@ -121,7 +130,10 @@ $(function(){
           contrast: $("#contrast").val(),
           hue: $("#hue").val(),
           saturate: $("#saturate").val(),
-          invert: $("#invert").val()
+          invert: $("#invert").val(),
+          red: $("#red").val(),
+          green: $("#green").val(),
+          blue: $("#blue").val()
         });
       };
 
@@ -136,7 +148,10 @@ $(function(){
         if (filterPending.h !== null) option.Hue = filterPending.h;
         if (filterPending.s !== null) option.Saturation = filterPending.s;
         if (filterPending.i !== null) option.Invert = filterPending.i;
-        filterPending = {b:null,c:null,h:null,s:null,i:null};
+        if (filterPending.r !== null) option.Red = filterPending.r;
+        if (filterPending.g !== null) option.Green = filterPending.g;
+        if (filterPending.bl !== null) option.Blue = filterPending.bl;
+        filterPending = {b:null,c:null,h:null,s:null,i:null,r:null,g:null,bl:null};
         chrome.storage.sync.set(option);
       };
 
@@ -175,13 +190,34 @@ $(function(){
         sendImmediate();
       };
 
+      var setRed = function(){
+        filterPending.r = parseInt($("#red").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
+      };
+
+      var setGreen = function(){
+        filterPending.g = parseInt($("#green").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
+      };
+
+      var setBlue = function(){
+        filterPending.bl = parseInt($("#blue").val(), 10) || 0;
+        scheduleFilters();
+        sendImmediate();
+      };
+
       var resetBC = function(){
         $("#brightness").val(0);
         $("#contrast").val(0);
         $("#hue").val(0);
         $("#saturate").val(0);
         $("#invert").val(0);
-        filterPending = {b:0,c:0,h:0,s:0,i:0};
+        $("#red").val(0);
+        $("#green").val(0);
+        $("#blue").val(0);
+        filterPending = {b:0,c:0,h:0,s:0,i:0,r:0,g:0,bl:0};
         flushFilters();
         sendImmediate();
       };
@@ -202,6 +238,9 @@ $(function(){
       $("#hue").on('input change', function(){ setHue(); });
       $("#saturate").on('input change', function(){ setSaturate(); });
       $("#invert").on('input change', function(){ setInvert(); });
+      $("#red").on('input change', function(){ setRed(); });
+      $("#green").on('input change', function(){ setGreen(); });
+      $("#blue").on('input change', function(){ setBlue(); });
       $("#bc-reset").click(function(){ resetBC(); });
       $("#applyOnLoad").change(function(){ setApplyOnLoad(); });
       $("#color-toggle").click(function(){
