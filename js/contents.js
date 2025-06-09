@@ -48,7 +48,7 @@ var startObserver = function(){
 };
 
 var setAll = function(){
-    chrome.storage.sync.get(function(items) {
+    chrome.storage.local.get(function(items) {
         var FlipX = items.FlipX || "off",
             FlipY = items.FlipY || "off",
             Rotate = items.Rotate || "0",

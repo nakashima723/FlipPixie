@@ -113,7 +113,7 @@
     if (typeof window.scheduleRotate === 'function') {
       window.scheduleRotate(currentAngle);
     } else {
-      chrome.storage.sync.set({ Rotate: String(currentAngle) }, () => {
+      chrome.storage.local.set({ Rotate: String(currentAngle) }, () => {
         chrome.runtime.sendMessage({type:'refresh'});
       });
     }
@@ -125,7 +125,7 @@
   }
 
   // ===== 初期化：保存角度を復元 =====
-  chrome.storage.sync.get(['Rotate'], (items) => {
+  chrome.storage.local.get(['Rotate'], (items) => {
     const saved = parseInt(items.Rotate || '0', 10);
     if (!isNaN(saved)) {
       currentAngle = ((saved % 360) + 360) % 360;

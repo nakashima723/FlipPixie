@@ -1,5 +1,5 @@
 $(function(){	
-  chrome.storage.sync.get(function(items){
+  chrome.storage.local.get(function(items){
     var setHeight = function() {
       var height = $('body').height();
       $('html,body').height(height);
@@ -69,7 +69,7 @@ $(function(){
         FlipX = "on";
       }
       option.FlipX = FlipX;
-      chrome.storage.sync.set(option);
+      chrome.storage.local.set(option);
     };
 
     var setButtonY = function(){
@@ -82,7 +82,7 @@ $(function(){
         FlipY = "on";
       }
       option.FlipY = FlipY;
-      chrome.storage.sync.set(option);
+      chrome.storage.local.set(option);
     };
 
       var rotatePending = null;
@@ -93,7 +93,7 @@ $(function(){
         var angle = rotatePending;
         rotatePending = null;
         if (angle === null) return;
-        chrome.storage.sync.set({Rotate: angle}, function(){
+        chrome.storage.local.set({Rotate: angle}, function(){
           chrome.runtime.sendMessage({type:'refresh'});
           if (rotatePending !== null && !rotateTimer) {
             rotateTimer = setTimeout(flushRotate, 100);
@@ -152,7 +152,7 @@ $(function(){
         if (filterPending.g !== null) option.Green = filterPending.g;
         if (filterPending.bl !== null) option.Blue = filterPending.bl;
         filterPending = {b:null,c:null,h:null,s:null,i:null,r:null,g:null,bl:null};
-        chrome.storage.sync.set(option);
+        chrome.storage.local.set(option);
       };
 
       var scheduleFilters = function(){
@@ -225,7 +225,7 @@ $(function(){
       var setApplyOnLoad = function(){
         ApplyOnLoad = $("#applyOnLoad").prop('checked');
         var option = {ApplyOnLoad: ApplyOnLoad};
-        chrome.storage.sync.set(option, function(){
+        chrome.storage.local.set(option, function(){
           chrome.runtime.sendMessage({type:'refresh'});
         });
       };
