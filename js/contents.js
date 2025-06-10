@@ -63,7 +63,7 @@ var setAll = function(){
             img = 'img, div';
         applyOnLoad = items.ApplyOnLoad || false;
 
-        var scale = " scale(1,1)";
+        var scale = ""; // デフォルトでは変形なし
         if (FlipX === "on" && FlipY === "on") {
             scale = " scale(-1,-1)";
         } else if (FlipX === "on") {
@@ -77,14 +77,40 @@ var setAll = function(){
             rotate = " rotate(" + Rotate + "deg)";
         }
 
-        var transform = rotate + scale;
+        var transform = (rotate + scale).trim();
 
         $(img).each(function(){
             if($(this).is('img') || $(this).css('background-image') !== 'none'){
-                $(this).css({'transform': transform});
+                
+                if(transform){
+                    // 元の transform を保存
+                    if($(this).data('fp-original-transform') === undefined){
+                        $(this).data('fp-original-transform', $(this).css('transform'));
+                    }
+                    $(this).css({'transform': transform});
+                } else {
+                    // 以前に拡張が変形を適用していた場合は元に戻す
+                    if($(this).data('fp-original-transform') !== undefined){
+                        $(this).css({'transform': $(this).data('fp-original-transform')});
+                        $(this).removeData('fp-original-transform');
+                    }
+                }
+
             }
         });
-        $('embed').css({'transform': transform});
+        $('embed').each(function(){
+            if(transform){
+                if($(this).data('fp-original-transform') === undefined){
+                    $(this).data('fp-original-transform', $(this).css('transform'));
+                }
+                $(this).css({'transform': transform});
+            } else {
+                if($(this).data('fp-original-transform') !== undefined){
+                    $(this).css({'transform': $(this).data('fp-original-transform')});
+                    $(this).removeData('fp-original-transform');
+                }
+            }
+        });
 
         updateColorMatrix(Red, Green, Blue);
         var filter = 'brightness(' + ((100 + parseInt(Brightness,10)) / 100) +
